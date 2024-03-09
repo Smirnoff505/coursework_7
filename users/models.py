@@ -7,9 +7,19 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
 
-    phone = models.CharField(max_length=35, verbose_name='телефон', blank=True, null=True)
-    telegram = models.CharField(max_length=100, verbose_name='телеграмм', blank=True, null=True)
-    avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', blank=True, null=True)
+    phone = models.CharField(
+        max_length=35,
+        verbose_name='телефон',
+        blank=True, null=True)
+    telegram = models.CharField(
+        max_length=100,
+        verbose_name='телеграмм',
+        blank=True, null=True)
+    avatar = models.ImageField(
+        upload_to='users/',
+        verbose_name='Аватар',
+        blank=True,
+        null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
