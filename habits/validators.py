@@ -43,6 +43,7 @@ class AccompanyingOrAwardValidator:
     def __call__(self, value):
         field_accompany = dict(value).get(self.field1)
         field_award = dict(value).get(self.field2)
+        field_is_pleasant_habit = value.get('is_pleasant_habit')
 
         if field_award is not None or field_accompany is not None:
 
@@ -51,10 +52,14 @@ class AccompanyingOrAwardValidator:
                     'Не должно быть заполнено одновременно и '
                     'поле вознаграждения, и поле связанной привычки'
                 )
-            elif not field_award and not field_accompany:
+            elif field_award and field_is_pleasant_habit:
                 raise ValidationError(
-                    'Поле вознаграждения или '
-                    'поле связанной привычки обязательны к заполнению')
+                    'При указании вознаграждения(award) нельзя указывать признак приятной привычки')
+
+        elif not field_award and not field_accompany and field_is_pleasant_habit:
+            raise ValidationError(
+                'При включенном признаке приятной привычки необходимо заполнить поле - Связанная привычка'
+            )
 
 
 class IsPleasantHabitValidator:
@@ -62,12 +67,6 @@ class IsPleasantHabitValidator:
     def __call__(self, value):
         field_is_pleasant = dict(value).get('is_pleasant_habit')
         field_accompany = dict(value).get('accompanying_habit')
-        field_award = dict(value).get('award')
-        if field_is_pleasant is True \
-                and field_award:
-            raise ValidationError(
-                f'{field_award} не может иметь признака приятной привычки')
-        elif (field_is_pleasant
-              is not True and field_accompany):
-            raise ValidationError(
-                f'{field_accompany} должен иметь признак приятной привычки')
+        if (field_is_pleasant
+                is not True and field_accompany):
+            raise ValidationError('Связанная привычка должна иметь признак приятной привычки')

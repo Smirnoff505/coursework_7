@@ -6,22 +6,13 @@ from config import settings
 
 
 class Habit(models.Model):
-    PERIODICITY_CHOICES = [
-        (1, '1 раз день'),
-        (2, '1 раз в 2 дня'),
-        (3, '1 раз в 3 дня'),
-        (4, '1 раз в 4 дня'),
-        (5, '1 раз в 5 дней'),
-        (6, '1 раз в 6 дней'),
-        (7, '1 раз в 7 дней'),
-    ]
-
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               on_delete=models.CASCADE,
                               verbose_name='Пользователь',
                               related_name='owner',
                               null=True,
-                              blank=True)
+                              blank=True
+                              )
     title = models.CharField(max_length=255,
                              verbose_name='Название привычки')
     place_of_execution = models.CharField(max_length=255,
@@ -30,15 +21,17 @@ class Habit(models.Model):
         verbose_name='Время начала выполнения привычки')
     action = models.TextField(verbose_name='Действие')
     is_pleasant_habit = models.BooleanField(
-        default=True,
+        default=False,
         blank=True,
         verbose_name='Признак приятной привычки')
-    accompanying_habit = models.CharField(max_length=255,
-                                          null=True,
-                                          blank=True,
-                                          verbose_name='Связанная привычка')
-    periodicity = models.SmallIntegerField(default=1,
-                                           verbose_name='Периодичность')
+
+    accompanying_habit = models.ForeignKey('self',
+                                           on_delete=models.SET_NULL,
+                                           null=True,
+                                           blank=True,
+                                           verbose_name='Связанная привычка')
+    periodicity = models.PositiveSmallIntegerField(default=1,
+                                                   verbose_name='Периодичность')
     award = models.TextField(null=True,
                              blank=True,
                              verbose_name='Вознаграждение')
