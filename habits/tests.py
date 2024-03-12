@@ -23,7 +23,6 @@ class HabitsTestCase(APITestCase):
             time_execution=time(11, 30, 0),
             action='test1',
             is_pleasant_habit=True,
-            accompanying_habit='test1',
             time_to_complete=timedelta(seconds=120),
             owner=self.user
         )
@@ -37,8 +36,7 @@ class HabitsTestCase(APITestCase):
             'place_of_execution': 'test',
             'time_execution': '21:30:00',
             'action': 'тест гулять',
-            'is_pleasant_habit': True,
-            'accompanying_habit': 'тест мыться',
+            'is_pleasant_habit': False,
             'time_to_complete': 75
         }
         response = self.client.post(
@@ -59,8 +57,8 @@ class HabitsTestCase(APITestCase):
                 'place_of_execution': 'test',
                 'time_execution': '21:30:00',
                 'action': 'тест гулять',
-                'is_pleasant_habit': True,
-                'accompanying_habit': 'тест мыться',
+                'is_pleasant_habit': False,
+                'accompanying_habit': None,
                 'periodicity': 1,
                 'award': None,
                 'time_to_complete': '00:01:15',
@@ -90,7 +88,7 @@ class HabitsTestCase(APITestCase):
              'place_of_execution': '',
              'time_execution': '11:30:00',
              'action': 'test1',
-             'accompanying_habit': 'test1',
+             'accompanying_habit': None,
              'periodicity': 1,
              'award': None,
              'time_to_complete': '00:02:00',
@@ -123,7 +121,7 @@ class HabitsTestCase(APITestCase):
                   'place_of_execution': '',
                   'time_execution': '11:30:00',
                   'action': 'test1',
-                  'accompanying_habit': 'test1',
+                  'accompanying_habit': None,
                   'periodicity': 1,
                   'award': None,
                   'time_to_complete': '00:02:00',
@@ -161,7 +159,7 @@ class HabitsTestCase(APITestCase):
                 'place_of_execution': '',
                 'time_execution': '11:30:00',
                 'action': 'test1',
-                'accompanying_habit': 'test1',
+                'accompanying_habit': None,
                 'periodicity': 1,
                 'award': None,
                 'is_publish': False,

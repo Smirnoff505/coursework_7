@@ -88,11 +88,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'habits',
-        'USER': 'postgres',
-        'PASSWORD': int(os.getenv('DB_PASSWORD')),
-        'HOST': '127.0.0.1',
-        'PORT': 5432
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': int(os.getenv('POSTGRES_PASSWORD')),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': int(os.getenv('POSTGRES_PORT'))
     }
 }
 
@@ -156,19 +156,18 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "https://read-only.example.com",
-    "https://read-and-write.example.com",
+    "https://127.0.0.1:8000",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://read-and-write.example.com",
+    "https://127.0.0.1:8000",
 ]
 
 # URL-адрес брокера сообщений
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_AND_RESULT')
 
 # URL-адрес брокера результатов, также Redis
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = os.getenv('CELERY_BROKER_AND_RESULT')
 
 # Часовой пояс для работы Celery
 CELERY_TIMEZONE = 'Asia/Yekaterinburg'
@@ -188,3 +187,16 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
