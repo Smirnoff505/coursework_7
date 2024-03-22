@@ -1,0 +1,89 @@
+version: '3'
+
+services:
+
+  redis:
+    image: redis
+    container_name: redis_cont
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - localnet
+
+  db:
+    restart: unless-stopped
+    image: postgres
+    container_name: postgres_cont
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - localnet
+
+  app:
+    build: .
+    container_name: app_cont
+    restart: unless-stopped
+    volumes:
+      - .:/code
+    tty: true
+    command: bash -c "python manage.py migrate
+      && python manage.py runserver 0.0.0.0:8000
+      && sleep 5
+      && python manage.py createsu"
+    ports:
+      - '8000:8000'
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - internet
+      - localnet
+
+  celery:
+    build: .
+    container_name: celery_cont
+    volumes:
+      - .:/code
+    tty: true
+    command: celery -A config worker -l INFO
+    depends_on:
+      - redis
+      - app
+    networks:
+      - localnet
+
+  celery_beat:
+    build: .
+    container_name: celerybeat_cont
+    volumes:
+      - .:/code
+    tty: true
+    command: celery -A config beat -l INFO -S django
+    depends_on:
+      - redis
+      - app
+    networks:
+      - localnet
+
+
+networks:
+  internet:
+    name: internet
+    driver: bridge
+  localnet:
+    name: localnet
+    driver: bridge
+
+volumes:
+  pg_data:
+
